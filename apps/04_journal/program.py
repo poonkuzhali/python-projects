@@ -1,54 +1,34 @@
-import os
-
-
-def load_file(filename):
-    print('Loading the journal...')
-    data = []
-    if os.path.exists(filename):
-        with open(filename, 'r') as f:
-            for entry in f.readlines():
-                data.append(entry.rstrip())
-    return data
-
-
-def check_file(filename):
-    if os.path.getsize(filename) > 0:
-        return True
-    return False
-
-
-def list_entries(data):
-    count = len(data)
-    print('You have {} entries.'.format(count))
-    for i, entry in enumerate(data, 1):
-        print(str(i) + '.', entry)
-
-
-def add_entries(data, entry):
-    data.append(entry)
-    return data
-
-
-def save(data):
-    with open('journal.txt', 'w') as f:
-        for entry in data:
-            f.write(entry + '\n')
+import journal
 
 
 def main():
-    command = 'z'
-    data = load_file('journal.txt')
-    while command != 'x':
-        command = input('What do you want to do? [L]ist, [A]dd or E[x]it ').lower()
+    print_header()
+    run_event_loop()
+
+
+def print_header():
+    print('------------------------------------------')
+    print('         JOURNAL APP')
+    print('------------------------------------------')
+
+
+def run_event_loop():
+    command = 'Empty'
+    data = journal.load_file('journal.txt')
+    print('What do you want to do with your journal?')
+    while command != 'x' and command:
+        command = input('[L]ist entries, [A]dd entry or E[x]it journal\n').lower()
         if command == 'l':
-            list_entries(data)
+            journal.list_entries(data)
         elif command == 'a':
             entry = input('Enter your journal entry: ')
-            data = add_entries(data, entry)
-        elif command == 'x':
-            print('Saving journal...')
-            save(data)
-            print('Exit journal')
+            data = journal.add_entries(data, entry)
+        elif command != 'x':
+            print('Wrong command. Try again!')
+
+    print('Saving journal...')
+    journal.save(data)
+    print('Exit journal')
 
 
 if __name__ == '__main__':
